@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 
-def calculate_init_time(yyyy_lbc: str, mm_lbc: str, dd_lbc: str, hh_lbc: str, init_delay: str) -> object:
+def calculate_init_time(yyyy_lbc, mm_lbc, dd_lbc, hh_lbc, init_delay):
     yyyy_lbc = int(yyyy_lbc)
     mm_lbc = int(mm_lbc)
     dd_lbc = int(dd_lbc)
@@ -13,4 +13,8 @@ def calculate_init_time(yyyy_lbc: str, mm_lbc: str, dd_lbc: str, hh_lbc: str, in
     return tuple([lbc_time, init_time])
 
 
-lbc_time, init_time = calculate_init_time('2000', '01', '01', '00', '30')
+def calculate_end_time(init_time, run_length):
+    run_length = int(run_length)
+
+    end_time = init_time + timedelta(hours=run_length)
+    return end_time
