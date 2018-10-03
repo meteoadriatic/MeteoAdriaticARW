@@ -1,21 +1,27 @@
 from time_calc import calculate_init_time, calculate_end_time
-from strc import lbc_hours
+from strc import lbc_hours, strc_ptiles_string, strc_cgi, strc_request, strc_download
+import subprocess
+
 
 # Defaults
 YYYY_lbc = '2018'
 MM_lbc = '10'
-DD_lbc = '01'
-HH_lbc = '00'
-init_delay = '12'
-run_length='120'
+DD_lbc = '03'
+HH_lbc = '12'
+init_delay = '06'
+run_length='12'
 lbc_frequency='3'
 
-strc_server=''
-strc_path=''
-strc_leftlon=''
-strc_rightlon=''
-strc_toplat=''
-strc_bottomlat=''
+strc_server='http://ems1.comet.ucar.edu'
+strc_path='cgi-bin/PTmaster.pl'
+strc_leftlon='6'
+strc_rightlon='25'
+strc_toplat='51'
+strc_bottomlat='39'
+strc_gfs_grid='0p25'
+strc_dataset='gfsp25'
+
+download_dir='download'
 
 
 gfs_run, wrf_init_time = calculate_init_time(YYYY_lbc, MM_lbc, DD_lbc, HH_lbc, init_delay)
@@ -25,28 +31,17 @@ print('GFS RUN:', gfs_run)
 print('WRF INIT:', wrf_init_time)
 print('WRF END:', wrf_end_time)
 
-# Build list of LBC's time stamps
+# Build strc request command
 lbc_hours = lbc_hours(wrf_init_time, wrf_end_time, lbc_frequency)
+strc_ptiles_string = strc_ptiles_string(gfs_run, lbc_hours, strc_gfs_grid)
+strc_cgi = strc_cgi(strc_server, strc_path, strc_ptiles_string, strc_leftlon,
+                            strc_rightlon, strc_toplat, strc_bottomlat, strc_dataset)
+strc_req = strc_request(strc_cgi)
+#print (strc_req)
 
-# for lbc_time in lbc_hours:
-#     print(lbc_time)
+# Request data with curl
+strc_response = subprocess.check_output(strc_req, shell=True, universal_newlines=True)
+#print (strc_response)
 
-
-
-
-# function build_list_of_files() {
-# strcdate=${ST_YYYY}${ST_MM}${ST_DD}${ST_HH}
-# strcdate=`echo "$strcdate" | cut -c 3-`
-# strcinit=${ST_HH}
-# strcfilestring=""
-# for ((i=$FIRSTFTIME;i<=$LASTFTIME;i+=$STEP)) ; do
-#     FCST_TIME=`printf "%03d\n" "$i"`
-#     strcfilestring+="file=${strcdate}.gfs.t${strcinit}z"
-#     strcfilestring+=".${STRCRES}.pgrb2f${FCST_TIME}&"
-# done
-# }
-
-# strccmd="${use_strc_server}/${STRCPATH}?${strcfilestring}"
-# strccmd+="&leftlon=${LEFTLON}&rightlon=${RIGHTLON}"
-# strccmd+="&toplat=${TOPLAT}&bottomlat=${BOTTOMLAT}&dset=${STRCDSET}"
-
+# Download ptiles
+strc_download(strc_response, download_dir)

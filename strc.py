@@ -1,28 +1,56 @@
-from time_calc import calculate_init_time, calculate_end_time
-from datetime import datetime, timedelta
+from datetime import timedelta
+import urllib.request
 
 
-
+# Build list of LBC's time stamps
 def lbc_hours(wrf_init_time, wrf_end_time, lbc_frequency):
     strc_time = wrf_init_time
     mylist = []
-
     while strc_time <= wrf_end_time:
-        strc_time = strc_time + timedelta(hours=int(lbc_frequency))
         mylist.append(strc_time)
-
+        strc_time = strc_time + timedelta(hours=int(lbc_frequency))
     return mylist
 
+# Build strc request string for all ptiles
+def strc_ptiles_string(gfs_run, lbc_hours, strc_gfs_grid):
+    strcfilestring=''
+    for lbc_time in lbc_hours:
+        ftime = (lbc_time - gfs_run)
+        ftime = (ftime.seconds//3600)
+        ftime = str(ftime).zfill(3)
+        strcfilestring += 'file=' + \
+                          gfs_run.strftime("%y%m%d%H") + \
+                          '.gfs.t' + \
+                          gfs_run.strftime("%H") + \
+                          'z.' + \
+                          str(strc_gfs_grid) + \
+                          '.pgrb2f' + \
+                          str(ftime) + \
+                          '&'
+    return strcfilestring
 
+# Build strc cgi-bin command
+def strc_cgi(strc_server, strc_path, strc_ptiles_string, strc_leftlon,
+                 strc_rightlon, strc_toplat, strc_bottomlat, strc_dataset):
+    command = strc_server + '/' + strc_path + '?' + \
+                   strc_ptiles_string + '&leftlon=' + strc_leftlon + \
+                   '&rightlon=' + strc_rightlon + '&toplat=' + strc_toplat + \
+                   '&bottomlat=' + strc_bottomlat + '&dset=' + strc_dataset
+    return command
 
+# Build strc request command
+def strc_request(strc_cgi):
+    request = 'curl -s ' + '"' + strc_cgi + '"'
+    return request
 
-
-# strcdate=${ST_YYYY}${ST_MM}${ST_DD}${ST_HH}
-# strcdate=`echo "$strcdate" | cut -c 3-`
-# strcinit=${ST_HH}
-# strcfilestring=""
-# for ((i=$FIRSTFTIME;i<=$LASTFTIME;i+=$STEP)) ; do
-#     FCST_TIME=`printf "%03d\n" "$i"`
-#     strcfilestring+="file=${strcdate}.gfs.t${strcinit}z"
-#     strcfilestring+=".${STRCRES}.pgrb2f${FCST_TIME}&"
-# done
+# Download ptiles from strc
+def strc_download(strc_response, download_dir):
+    response = iter(strc_response.splitlines())
+    for line in response:
+        if "http://" in line:
+            path, file, status, size = line.split(' ')
+            if status == 'Success':
+                myfileurl = path + '/' + file
+                myfiledest = download_dir + '/' + file
+                print ('Downloading ' + myfileurl + ' into ' + myfiledest)
+                urllib.request.urlretrieve(myfileurl, myfiledest)
