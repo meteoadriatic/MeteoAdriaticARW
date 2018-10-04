@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TEST</title>
+</head>
+<body>
+    <h1>Test web interface for MeteoAdriatic ARW</h1>
+    <h2>Proof of concept; displaying few variables from the system.</h2>
+        {% for item in data %}
+            <p>GFS run: {{ item.gfs_run }}</p>
+            <p>WRF init time: {{ item.wrf_init_time }}</p>
+            <p>WRF end time: {{ item.wrf_end_time }}</p>
+        {% endfor %}
+
+</body>
+</html>

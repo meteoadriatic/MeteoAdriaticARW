@@ -1,0 +1,7 @@
+YYYY_lbc = '2018'
+MM_lbc = '10'
+DD_lbc = '03'
+HH_lbc = '12'
+init_delay = '06'
+run_length = '06'
+lbc_frequency = '3'

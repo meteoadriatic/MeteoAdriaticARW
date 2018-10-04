@@ -12,12 +12,13 @@ def lbc_hours(wrf_init_time, wrf_end_time, lbc_frequency):
         strc_time = strc_time + timedelta(hours=int(lbc_frequency))
     return mylist
 
+
 # Build strc request string for all ptiles
-def strc_ptiles_string(gfs_run, lbc_hours, strc_gfs_grid):
-    strcfilestring=''
+def ptiles_string(gfs_run, lbc_hours, strc_gfs_grid):
+    strcfilestring = ''
     for lbc_time in lbc_hours:
         ftime = (lbc_time - gfs_run)
-        ftime = (ftime.seconds//3600)
+        ftime = (ftime.seconds // 3600)
         ftime = str(ftime).zfill(3)
         strcfilestring += 'file=' + \
                           gfs_run.strftime("%y%m%d%H") + \
@@ -30,17 +31,19 @@ def strc_ptiles_string(gfs_run, lbc_hours, strc_gfs_grid):
                           '&'
     return strcfilestring
 
+
 # Build strc cgi-bin command
-def strc_cgi(strc_server, strc_path, strc_ptiles_string, strc_leftlon,
-                 strc_rightlon, strc_toplat, strc_bottomlat, strc_dataset):
+def build_cgi(strc_server, strc_path, strc_ptiles_string, strc_leftlon,
+             strc_rightlon, strc_toplat, strc_bottomlat, strc_dataset):
     command = strc_server + '/' + strc_path + '?' + \
-                   strc_ptiles_string + '&leftlon=' + strc_leftlon + \
-                   '&rightlon=' + strc_rightlon + '&toplat=' + strc_toplat + \
-                   '&bottomlat=' + strc_bottomlat + '&dset=' + strc_dataset
+              strc_ptiles_string + '&leftlon=' + strc_leftlon + \
+              '&rightlon=' + strc_rightlon + '&toplat=' + strc_toplat + \
+              '&bottomlat=' + strc_bottomlat + '&dset=' + strc_dataset
     return command
 
+
 # Download ptiles from strc
-def strc_download(strc_response, download_dir):
+def download_ptiles(strc_response, download_dir):
     response = iter(strc_response.splitlines())
     for line in response:
         if "http://" in line:
@@ -48,8 +51,9 @@ def strc_download(strc_response, download_dir):
             if status == 'Success':
                 myfileurl = path + '/' + file
                 myfiledest = download_dir + '/' + file
-                print ('Downloading ' + myfileurl + ' into ' + myfiledest)
+                print('Downloading ' + myfileurl + ' into ' + myfiledest)
                 urllib.request.urlretrieve(myfileurl, myfiledest)
+
 
 # Clean input directory
 def clean_inputdir(download_dir):
