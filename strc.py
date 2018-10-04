@@ -1,5 +1,6 @@
 from datetime import timedelta
 import urllib.request
+import os
 
 
 # Build list of LBC's time stamps
@@ -38,11 +39,6 @@ def strc_cgi(strc_server, strc_path, strc_ptiles_string, strc_leftlon,
                    '&bottomlat=' + strc_bottomlat + '&dset=' + strc_dataset
     return command
 
-# Build strc request command
-def strc_request(strc_cgi):
-    request = 'curl -s ' + '"' + strc_cgi + '"'
-    return request
-
 # Download ptiles from strc
 def strc_download(strc_response, download_dir):
     response = iter(strc_response.splitlines())
@@ -54,3 +50,14 @@ def strc_download(strc_response, download_dir):
                 myfiledest = download_dir + '/' + file
                 print ('Downloading ' + myfileurl + ' into ' + myfiledest)
                 urllib.request.urlretrieve(myfileurl, myfiledest)
+
+# Clean input directory
+def clean_inputdir(download_dir):
+    folder = download_dir
+    for the_file in os.listdir(folder):
+        file_path = os.path.join(folder, the_file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print(e)

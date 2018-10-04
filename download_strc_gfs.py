@@ -1,6 +1,6 @@
 from time_calc import calculate_init_time, calculate_end_time
-from strc import lbc_hours, strc_ptiles_string, strc_cgi, strc_request, strc_download
-import subprocess
+from strc import lbc_hours, strc_ptiles_string, strc_cgi, strc_download, clean_inputdir
+import urllib.request
 
 
 # Defaults
@@ -9,7 +9,7 @@ MM_lbc = '10'
 DD_lbc = '03'
 HH_lbc = '12'
 init_delay = '06'
-run_length='12'
+run_length='06'
 lbc_frequency='3'
 
 strc_server='http://ems1.comet.ucar.edu'
@@ -31,17 +31,19 @@ print('GFS RUN:', gfs_run)
 print('WRF INIT:', wrf_init_time)
 print('WRF END:', wrf_end_time)
 
-# Build strc request command
+# Clean input directory
+clean_inputdir(download_dir)
+
+# Build strc request cgi command
 lbc_hours = lbc_hours(wrf_init_time, wrf_end_time, lbc_frequency)
 strc_ptiles_string = strc_ptiles_string(gfs_run, lbc_hours, strc_gfs_grid)
 strc_cgi = strc_cgi(strc_server, strc_path, strc_ptiles_string, strc_leftlon,
                             strc_rightlon, strc_toplat, strc_bottomlat, strc_dataset)
-strc_req = strc_request(strc_cgi)
-#print (strc_req)
 
-# Request data with curl
-strc_response = subprocess.check_output(strc_req, shell=True, universal_newlines=True)
-#print (strc_response)
+# Request ptiles
+req = urllib.request.Request(strc_cgi)
+resp = urllib.request.urlopen(req)
+strc_response = resp.read()
 
 # Download ptiles
-strc_download(strc_response, download_dir)
+strc_download(strc_response.decode("utf-8"), download_dir)
