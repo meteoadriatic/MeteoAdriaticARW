@@ -1,5 +1,5 @@
-from time_calc import gfs_run, wrf_init_time, wrf_end_time
-import strc
+from lib.time_calc import gfs_run, wrf_init_time, wrf_end_time
+from lib import strc
 import urllib.request
 from date_info import *
 
@@ -27,7 +27,7 @@ strc.clean_inputdir(download_dir)
 lbc_hours = strc.lbc_hours(wrf_init_time, wrf_end_time, lbc_frequency)
 ptiles_string = strc.ptiles_string(gfs_run, lbc_hours, strc_gfs_grid)
 cgi = strc.build_cgi(strc_server, strc_path, ptiles_string, strc_leftlon,
-                          strc_rightlon, strc_toplat, strc_bottomlat, strc_dataset)
+                     strc_rightlon, strc_toplat, strc_bottomlat, strc_dataset)
 
 # Request ptiles
 req = urllib.request.Request(cgi)

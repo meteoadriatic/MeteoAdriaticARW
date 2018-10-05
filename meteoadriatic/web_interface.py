@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 app = Flask(__name__)
-from time_calc import gfs_run, wrf_init_time, wrf_end_time
+from lib.time_calc import gfs_run, wrf_init_time, wrf_end_time
 
 data = [
     {
