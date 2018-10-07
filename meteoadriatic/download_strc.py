@@ -13,7 +13,7 @@ strc_bottomlat = '39'
 strc_gfs_grid = '0p25'
 strc_dataset = 'gfsp25'
 
-download_dir = 'download'
+download_dir = 'runs/test_domain/input'
 
 
 print('GFS RUN:', gfs_run)
