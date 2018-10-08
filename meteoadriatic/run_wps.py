@@ -1,5 +1,6 @@
-from lib.time_calc import wrf_init_time, wrf_end_time
-from lib.create_namelists import create_namelist_wps
+from lib.time_calc import wrf_init_time
+from lib.create_namelists import calculate_nests_date, create_namelist_wps
+from date_info import *
 
 namelist_wps_static = "../runs/test_domain/static/namelist.wps"
 namelist_wps_dynamic = "../runs/test_domain/wpsprd/namelist.wps"
@@ -12,14 +13,17 @@ We need to edit "start_date = ..." and "end_date = ..." lines
 
 '''
 
-create_namelist_wps(namelist_wps_static, namelist_wps_dynamic, wrf_init_time, wrf_end_time)
+nests_definition = nests.split(",")
+domains_definition = ['0:0:0'] + nests_definition
 
+domains_start, domains_end = calculate_nests_date(domains_definition, wrf_init_time)
+domains_start = [dt.strftime("%Y-%m-%d_%H:%M:%S") for dt in domains_start]
+domains_end = [dt.strftime("%Y-%m-%d_%H:%M:%S") for dt in domains_end]
+print(domains_start)
+print(domains_end)
 
-'''
-Above construction works but only for parent domain entry.
-TODO: construct a loop that will also add entries for nests.
+create_namelist_wps(namelist_wps_static, namelist_wps_dynamic, domains_start, domains_end)
 
-'''
 
 
 '''
