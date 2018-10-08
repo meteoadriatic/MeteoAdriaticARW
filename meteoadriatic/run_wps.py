@@ -1,7 +1,5 @@
-import sys
-import fileinput
-from shutil import copyfile
 from lib.time_calc import wrf_init_time, wrf_end_time
+from lib.create_namelists import create_namelist_wps
 
 namelist_wps_static = "../runs/test_domain/static/namelist.wps"
 namelist_wps_dynamic = "../runs/test_domain/wpsprd/namelist.wps"
@@ -14,14 +12,8 @@ We need to edit "start_date = ..." and "end_date = ..." lines
 
 '''
 
-copyfile(namelist_wps_static, namelist_wps_dynamic)
+create_namelist_wps(namelist_wps_static, namelist_wps_dynamic, wrf_init_time, wrf_end_time)
 
-for line in fileinput.input([namelist_wps_dynamic], inplace=True):
-    if line.strip().startswith('start_date = '):
-        line = "start_date = '" + str(wrf_init_time) + "'" + "\n"
-    if line.strip().startswith('end_date = '):
-        line = "start_date = '" + str(wrf_end_time) + "'" + "\n"
-    sys.stdout.write(line)
 
 '''
 Above construction works but only for parent domain entry.

@@ -1,6 +1,6 @@
 YYYY_lbc = '2018'
 MM_lbc = '10'
-DD_lbc = '05'
+DD_lbc = '08'
 HH_lbc = '00'
 init_delay = '06'
 run_length = '06'
