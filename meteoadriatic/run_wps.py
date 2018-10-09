@@ -15,14 +15,15 @@ We need to edit "start_date = ..." and "end_date = ..." lines
 
 nests_definition = nests.split(",")
 domains_definition = ['0:0:0'] + nests_definition
+max_dom = len(domains_definition)
 
-domains_start, domains_end = calculate_nests_date(domains_definition, wrf_init_time)
-domains_start = [dt.strftime("%Y-%m-%d_%H:%M:%S") for dt in domains_start]
-domains_end = [dt.strftime("%Y-%m-%d_%H:%M:%S") for dt in domains_end]
-print(domains_start)
-print(domains_end)
+start_date, end_date = calculate_nests_date(domains_definition, wrf_init_time)
+start_date = [dt.strftime("%Y-%m-%d_%H:%M:%S") for dt in start_date]
+end_date = [dt.strftime("%Y-%m-%d_%H:%M:%S") for dt in end_date]
 
-create_namelist_wps(namelist_wps_static, namelist_wps_dynamic, domains_start, domains_end)
+interval_seconds = int(lbc_frequency) * 3600
+
+create_namelist_wps(namelist_wps_static, namelist_wps_dynamic, start_date, end_date, max_dom, interval_seconds)
 
 
 
