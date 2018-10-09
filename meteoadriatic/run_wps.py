@@ -3,8 +3,8 @@ from lib import namelists
 from date_info import *
 from shutil import copyfile
 
-namelist_wps_static = "runs/test_domain/static/namelist.wps"
-namelist_wps_dynamic = "runs/test_domain/wpsprd/namelist.wps"
+namelist_wps_static = "../runs/test_domain/static/namelist.wps"
+namelist_wps_dynamic = "../runs/test_domain/wpsprd/namelist.wps"
 
 '''
 This module prepares prerequisites required to run WPS suite (ungrib.exe and metgrid.exe) and then executes it.
