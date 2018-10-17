@@ -1,6 +1,7 @@
 from datetime import timedelta
 import urllib.request
 import os
+import shutil
 
 
 # Build list of LBC's time stamps
@@ -57,11 +58,6 @@ def download_ptiles(strc_response, download_dir):
 
 # Clean input directory
 def clean_inputdir(download_dir):
-    folder = download_dir
-    for the_file in os.listdir(folder):
-        file_path = os.path.join(folder, the_file)
-        try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-        except Exception as e:
-            print(e)
+    if os.path.isdir(download_dir):
+        shutil.rmtree(download_dir)
+    os.mkdir(download_dir)
