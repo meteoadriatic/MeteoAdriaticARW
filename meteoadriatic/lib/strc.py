@@ -55,6 +55,21 @@ def download_ptiles(strc_response, download_dir):
                 print('Downloading ' + myfileurl + ' into ' + myfiledest)
                 urllib.request.urlretrieve(myfileurl, myfiledest)
 
+'''
+TODO:
+We must write MUCH more robust downloading system with required features:
+1) Configurable network timeout
+2) Checking downloaded file size
+3) Checking number of downloaded files
+4) Retrying request for missing files
+5) Redownloading missing files
+6) Repeating whole cycles configurable number of times
+7) Configurable delays between cycles
+8) Cycling through configurable list of servers
+9) Fallback methods in case of STRC failure (NOMADS, HTTP)
+
+Contributors are welcome.
+'''
 
 # Clean input directory
 def clean_inputdir(download_dir):
