@@ -2,7 +2,34 @@ from lib.time_calc import wrf_init_time
 from lib import namelists
 from date_info import *
 from shutil import copyfile
+from conf import vtables
+import configparser
 
+'''
+Read configuration files
+references:
+https://wiki.python.org/moin/ConfigParserExamples
+'''
+
+Config = configparser.ConfigParser()
+defaults = Config.read("../config/defaults.ini")
+
+def ConfigSectionMap(section):
+    dict1 = {}
+    options = Config.options(section)
+    for option in options:
+        try:
+            dict1[option] = Config.get(section, option)
+            if dict1[option] == -1:
+                DebugPrint("skip: %s" % option)
+        except:
+            print("exception on %s!" % option)
+            dict1[option] = None
+    return dict1
+
+input_dataset = ConfigSectionMap("dataset")['input_dataset']
+
+# Set file paths
 namelist_wps_static = "../runs/test_domain/static/namelist.wps"
 namelist_wps_dynamic = "../runs/test_domain/wpsprd/namelist.wps"
 
@@ -81,3 +108,8 @@ This file prepares prerequisites required to run WPS suite (ungrib.exe and metgr
 All tables and executables has to be linked into WPS process directory.
 
 '''
+
+# 2A: link Vtable according to input data source
+vtable = vtables.vtables.get(input_dataset)
+
+print("Selected Vtable:", vtable)
